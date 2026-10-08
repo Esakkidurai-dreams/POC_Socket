@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Socket.IO Notification</title>
+
+</head>
+
+<body>
+
+    <h1>🔔 Notification System</h1>
+
+    <input
+        type="text"
+        id="title"
+        placeholder="Notification title"
+    >
+
+    <br><br>
+
+    <input
+        type="text"
+        id="message"
+        placeholder="Notification message"
+    >
+
+    <br><br>
+
+    <button onclick="sendNotification()">
+        Send Notification
+    </button>
+
+    <h2>Notifications</h2>
+
+    <div id="notifications"></div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+        const socket = io();
+
+        // When connected
+        socket.on("connect", () => {
+
+            console.log("Connected");
+
+            console.log("Socket ID:", socket.id);
+
+        });
+
+        socket.on("connect_error", (error) => {
+
+            console.error("Socket connection failed:", error.message);
+
+        });
+
+
+        // Receive notification
+        socket.on("notification", (data) => {
+
+            console.log("Notification:", data);
+
+            const notification = document.createElement("p");
+
+            notification.innerHTML =
+                `🔔 <b>${data.title}</b> - ${data.message}`;
+
+            document
+                .getElementById("notifications")
+                .appendChild(notification);
+
+        });
+
+
+        // Send notification
+        function sendNotification() {
+
+            const title =
+                document.getElementById("title").value;
+
+            const message =
+                document.getElementById("message").value;
+
+
+            socket.emit("sendNotification", {
+
+                title: title,
+
+                message: message
+
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>
